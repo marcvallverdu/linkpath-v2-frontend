@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  --bg-0: #0b0d10;
+  --bg-1: #0f131a;
+  --bg-2: #141b26;
+  --card: rgba(20, 27, 38, 0.9);
+  --stroke: rgba(255, 255, 255, 0.08);
+  --muted: rgba(230, 240, 255, 0.6);
+  --accent: #59f0c6;
+  --accent-2: #ff7a59;
+  --accent-3: #f7c66a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(1200px 800px at 20% -10%, rgba(89, 240, 198, 0.12), transparent),
+    radial-gradient(900px 700px at 120% 0%, rgba(255, 122, 89, 0.18), transparent),
+    linear-gradient(160deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2) 100%);
+  color: #e6f0ff;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.05'%3E%3Cpath d='M0 80h160M80 0v160'/%3E%3C/g%3E%3C/svg%3E");
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+  opacity: 0.35;
+}
+
+input, select, textarea {
+  background: rgba(8, 12, 18, 0.9);
+  border: 1px solid var(--stroke);
+  color: #e6f0ff;
+}
+
+::selection {
+  background: rgba(89, 240, 198, 0.3);
+}
