@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CookiesCompare from "../../components/CookiesCompare";
 import IssuesList from "../../components/IssuesList";
 import JsonViewer from "../../components/JsonViewer";
@@ -157,6 +157,14 @@ export default function TestPage() {
       setSubmitting(false);
     }
   };
+
+  // Auto-scroll to results when status changes
+  const resultsRef = React.useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (status && resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [status]);
 
   const result = status?.result as Record<string, unknown> | undefined;
   const redirectChain =
@@ -349,6 +357,21 @@ export default function TestPage() {
           </div>
         )}
       </section>
+
+      {status && (
+        <div ref={resultsRef} className={`rounded-2xl border px-5 py-4 text-sm font-medium flex items-center gap-3 ${
+          status.status === "completed" ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" :
+          status.status === "failed" ? "border-red-400/30 bg-red-400/10 text-red-200" :
+          "border-blue-400/30 bg-blue-400/10 text-blue-200"
+        }`}>
+          {(status.status === "pending" || status.status === "active") && (
+            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+          )}
+          {status.status === "completed" && "✅ "}
+          {status.status === "failed" && "❌ "}
+          Test {status.status}{status.jobId ? ` — ${status.jobId.slice(0, 8)}…` : ""}
+        </div>
+      )}
 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-4">
