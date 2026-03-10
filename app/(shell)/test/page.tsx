@@ -171,11 +171,47 @@ export default function TestPage() {
     (result?.redirectChain as unknown) ??
     ((status as unknown as Record<string, unknown>)?.redirectChain as unknown);
   const issues = normalizeIssues(result?.issues ?? (status as any)?.issues);
-  const cookiesFound = normalizeCookies(
-    result?.cookies ??
-      (result?.landing as Record<string, unknown> | undefined)?.cookies ??
-      (result?.landing as Record<string, unknown> | undefined)?.cookiesFound
-  );
+  // Extract cookies from all redirect chain hops + landing page
+  const allCookies = useMemo(() => {
+    const cookies: string[] = [];
+    // From redirect chain
+    const chain = result?.redirectChain as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(chain)) {
+      for (const hop of chain) {
+        const cookiesSet = hop.cookiesSet as Array<Record<string, unknown>> | undefined;
+        if (Array.isArray(cookiesSet)) {
+          for (const c of cookiesSet) {
+            if (typeof c.name === "string" && !cookies.includes(c.name)) {
+              cookies.push(c.name);
+            }
+          }
+        }
+      }
+    }
+    // From landing page
+    const landing = result?.landing as Record<string, unknown> | undefined;
+    if (landing) {
+      const present = landing.cookiesPresent as Array<Record<string, unknown>> | undefined;
+      if (Array.isArray(present)) {
+        for (const c of present) {
+          if (typeof c.name === "string" && !cookies.includes(c.name)) {
+            cookies.push(c.name);
+          }
+        }
+      }
+      // Also check expectedCookies.found
+      const expected = landing.expectedCookies as Record<string, unknown> | undefined;
+      if (expected?.found && Array.isArray(expected.found)) {
+        for (const name of expected.found) {
+          if (typeof name === "string" && !cookies.includes(name)) {
+            cookies.push(name);
+          }
+        }
+      }
+    }
+    return cookies;
+  }, [result]);
+  const cookiesFound = allCookies;
 
   return (
     <div className="space-y-8">
